@@ -1,0 +1,276 @@
+snippet GCD "GCD Function"
+long long gcd(long long a,long long b)
+{
+	return ((b==0)?a:gcd(b,a%b));
+}
+endsnippet
+
+snippet PRACTICE "Main snippet"
+#include <bits/stdc++.h>
+using namespace std;
+
+#ifdef LOCAL
+	#include"debug.h"
+#else
+	#define debug(x)
+#endif
+
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	${1}
+	return 0;
+}
+endsnippet
+
+snippet DSU "Disjoint Set Union"
+class DisjointSet
+{
+
+private:
+	
+	vector<long long> ultimateParent,rank,size;
+
+public:
+	
+	DisjointSet(long long n)
+	{
+		ultimateParent.resize(n+1);
+		rank.resize(n+1,0);
+		size.resize(n+1,1);
+		for(long long i=0;i<=n;++i)
+		{
+			ultimateParent[i]=i;
+		}
+	}
+
+	long long findUltimateParent(long long node)
+	{
+		if(ultimateParent[node]==node)
+		{
+			return node;
+		}
+		return ultimateParent[node]=findUltimateParent(ultimateParent[node]);
+	}
+
+	long long getSize(long long node)
+	{
+		return size[node];
+	}
+
+	long long getRank(long long node)
+	{
+		return rank[node];
+	}
+
+	void unionByRank(long long u,long long v)
+	{
+		long long ultimateParentOfU=findUltimateParent(u),ultimateParentOfV=findUltimateParent(v);
+		if(ultimateParentOfU==ultimateParentOfV)
+		{
+			return;
+		}
+		if(rank[ultimateParentOfU]<rank[ultimateParentOfV])
+		{
+			ultimateParent[ultimateParentOfU]=ultimateParentOfV;
+		}
+		else if(rank[ultimateParentOfU]>rank[ultimateParentOfV])
+		{
+			ultimateParent[ultimateParentOfV]=ultimateParentOfU;
+		}
+		else
+		{
+			ultimateParent[ultimateParentOfV]=ultimateParentOfU;
+			rank[ultimateParentOfU]++;
+		}
+	}
+
+	void unionBySize(long long u,long long v)
+	{
+		long long ultimateParentOfU=findUltimateParent(u),ultimateParentOfV=findUltimateParent(v);
+		if(ultimateParentOfU==ultimateParentOfV)
+		{
+			return;
+		}
+		if(size[ultimateParentOfU]<size[ultimateParentOfV])
+		{
+			ultimateParent[ultimateParentOfU]=ultimateParentOfV;
+			size[ultimateParentOfV]+=size[ultimateParentOfU];
+		}
+		else
+		{
+			ultimateParent[ultimateParentOfV]=ultimateParentOfU;
+			size[ultimateParentOfU]+=size[ultimateParentOfV];
+		}
+	}
+
+};
+endsnippet
+
+snippet FACTORIALS "Factorials helper"
+vector<long long> fact(1000011);
+
+void fillFact()
+{
+	long long n=fact.size();
+	fact[0]=1;
+	for(long long i=1;i<n;++i)
+	{
+		fact[i]=(i%mod*fact[i-1]%mod)%mod;
+	}
+}
+endsnippet
+
+snippet SIEVE "Sieve for primes in O(nlog(logn))"
+vector<bool> isPrime(1000001,true);
+
+void sieve()
+{
+	long long n=isPrime.size();
+	isPrime[0]=isPrime[1]=false;
+	isPrime[2]=true;
+	for(long long p=2;p*p<n;p++)
+	{
+		if(isPrime[p]==true)
+		{
+			for(long long i=p*p;i<n;i+=p)
+			{
+				isPrime[i]=false;
+			}
+		}
+	}
+}
+endsnippet
+
+snippet DIVISORS "Get the divisors of all numbers from 1 to a certain number (n) in O(nlogn)"
+vector<vector<long long>> divisors(1000011);
+
+void fillDivisors()
+{
+	long long n=divisors.size();
+	divisors[0].push_back(0);
+	divisors[1].push_back(1);
+	for(long long i=2;i<n;i++)
+	{
+		divisors[i].push_back(1);
+	}
+	for(long long i=2;i<n;i++)
+	{
+		for(long long j=i;j<n;j+=i)
+		{
+			divisors[j].push_back(i);
+		}
+	}
+}
+endsnippet
+
+snippet POWER "(a^b)%mod in O(logb)"
+long long power(long long a,long long b)        // Use when mod is of order 10^9 or less
+{
+	long long ans=1;
+	a=a%mod;
+	while(b)
+	{
+		if(b&1)
+		{
+			ans=(ans*a)%mod;
+		}
+		a=(a*a)%mod;
+		b>>=1;
+	}
+	return ans%mod;
+}
+endsnippet
+
+snippet NCR "Binomial coeff"
+long long nCr(long long n,long long r)         // Ensure that fillFact() is called before this function is used
+{
+	if(n<r||n<0||r<0)
+	{
+		return 0;
+	}
+	if(r==n||r==0)
+	{
+		return 1;
+	}
+	return (fact[n]*power(fact[r],mod-2)%mod*power(fact[n-r],mod-2)%mod)%mod;
+}
+endsnippet
+
+snippet PREFIX "Get the prefix sum of an array"
+vector<long long> getPrefix(vector<long long> &a,bool startBy0=false)
+{
+	long long n=a.size();
+	vector<long long> prefix;
+	prefix.push_back(a[0]);
+	for(long long i=1;i<n;++i)
+	{
+		prefix.push_back(a[i]+prefix.back());
+	}
+	if(startBy0)
+	{
+		reverse(prefix.begin(),prefix.end());
+		prefix.push_back(0);
+		reverse(prefix.begin(),prefix.end());
+	}
+	return prefix;
+}
+endsnippet
+
+snippet LPF "Get the least prime factors of all numbers in a certain range along with the primes"
+vector<long long> lpf(10000001,0);
+vector<long long> primes;
+
+void leastPrimeFactor()
+{
+    long long n=lpf.size();
+    for(long long i=2;i<n;++i)
+    {
+        if(lpf[i]==0)
+        {
+            lpf[i]=i;
+            primes.push_back(i);
+        }
+        for(long long j=0;i*primes[j]<n;++j)
+        {
+            lpf[i*primes[j]]=primes[j];
+            if(primes[j]==lpf[i])
+            {
+                break;
+            }
+        }
+    }
+}
+endsnippet
+
+snippet SPF "Get all prime factors in a range"
+vector<long long> spf(10000001,0);
+
+void smallestPrimeFactor()
+{
+    long long n=spf.size();
+    for(long long i=1;i<n;++i)
+    {
+        spf[i]=i;
+    }
+    for(long long i=4;i<n;i+=2)
+    {
+        spf[i]=2;
+    }
+    for(long long i=3;i*i<n;++i)
+    {
+        if(spf[i]==i)
+        {
+            for(long long j=i*i;j<n;j+=i)
+            {
+                if(spf[j]==j)
+                {
+                    spf[j]=i;
+                }
+            }
+        }
+    }
+}
+endsnippet
