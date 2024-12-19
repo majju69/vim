@@ -8,7 +8,7 @@ set autoindent
 set smartindent
 set showmatch
 set backspace=indent,eol,start
-set number
+set relativenumber
 call plug#begin('~/.vim/plugged')
 Plug 'SirVer/ultisnips'          " UltiSnips snippet manager
 Plug 'honza/vim-snippets'        " Optional: pre-defined snippets library
@@ -43,10 +43,17 @@ let g:ale_fix_on_save = 1
 " Highlight errors in real-time
 let g:ale_sign_column_always = 1
 
+
 " Customize error and warning symbols (optional)
 let g:ale_sign_error = '>>'
 let g:ale_sign_warning = '>'
 
 " Show errors in a floating window (optional)
 let g:ale_hover_cursor = 1
+
+"Auto runs c++ or c files as soon as :w is recieved
+"autocmd BufWritePost *.c,*.cpp make
+
+" Use control+b to call :w and :make
+nnoremap <C-b> :w<CR>:make<CR>
 
