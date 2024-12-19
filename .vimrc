@@ -57,3 +57,6 @@ let g:ale_hover_cursor = 1
 " Use control+b to call :w and :make
 nnoremap <C-b> :w<CR>:make<CR>
 
+" Use control+d to call yy and p
+inoremap <C-d> <Esc>YpA
+
